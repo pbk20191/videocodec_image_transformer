@@ -1,5 +1,6 @@
 click==8.1.8
 pillow==11.2.1
 pillow_heif==0.22.0
+pyinstaller==6.13.0
 setuptools==80.3.1
 shiv==1.0.8
