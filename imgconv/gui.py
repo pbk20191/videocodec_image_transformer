@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
 from pathlib import Path
-from comon_img import convert_image, ImageFormat  # Import the core conversion function and ImageFormat enum
+from imgconv.comon_img import convert_image, ImageFormat  # Import the core conversion function and ImageFormat enum
 
 class ImageConverterGUI(tk.Tk):
     def __init__(self):
