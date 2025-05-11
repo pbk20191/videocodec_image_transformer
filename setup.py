@@ -13,7 +13,7 @@ setup(
     author_email="impbk2002@gmail.com",
     description="A simple image converter for HEIF and AVIF formats.",
     long_description_content_type="text/markdown",
-    py_modules=["hello",],
+    py_modules=["entry",],
     requires=["Pillow", "pillow_heif", "click"],
     install_requires=[
         "Pillow>=8.0.0",
@@ -23,10 +23,10 @@ setup(
     packages=find_packages(),
     entry_points={
         "console_scripts": [
-            "hello=hello:cli_main",
+            "entry=entry.cli_entry:cli_main",
         ],
         "gui_scripts": [
-            "hello=hello:gui_main",
+            "entry=entry.gui_entry:gui_main",
         ],
     },
 )

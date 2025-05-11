@@ -9,6 +9,7 @@ def build(output_path: Path, entry: str):
         [
             sys.executable,
             "-m", "shiv",
+            # "-c", "entry",
             "-e", entry,
             "-o", str(output_path),
             "."
@@ -24,5 +25,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    entrypoint = "hello:cli_main" if args.mode == "cli" else "hello:gui_main"
+    entrypoint = "entry.cli_entry:cli_main" if args.mode == "cli" else "entry.gui_entry:gui_main"
     build(args.output_path, entrypoint)
