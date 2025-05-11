@@ -7,8 +7,7 @@ import os
 import shutil
 from enum import Enum
 import click
-
-SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
+SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp", ".heic", ".heif"}
 
 SUPPORTED_FORMATS = {"heif", "avif"}
 
@@ -26,7 +25,10 @@ def convert_image(input_path:Path, output_path:Path, format:ImageFormat) -> None
         outputPath (Path): Path to save the converted image.
         format (ImageFormat): The desired output format (HEIF or AVIF).
     """
+    Image.init()
     pillow_heif.register_heif_opener()
+    import pillow_avif
+    dest_suffix = ".heif" if format == ImageFormat.HEIF else ".avif"
     for root, _, files in os.walk(input_path):
         rel_root = Path(root).relative_to(input_path)
         dest_root = output_path / rel_root
@@ -39,9 +41,11 @@ def convert_image(input_path:Path, output_path:Path, format:ImageFormat) -> None
             if ext in SUPPORTED_EXTS:
                 try:
                     with Image.open(src_file) as img:
-                        dest_suffix = ".heif" if format == ImageFormat.HEIF else ".avif"
                         dest_file = dest_root / (Path(file).stem + dest_suffix)
-                        img.save(dest_file, format=format.name.upper(), quality=None)
+                        if format == ImageFormat.HEIF:
+                            img.save(dest_file, format=format.value.upper(), quality=None)
+                        else:
+                            img.save(dest_file, format=format.value.upper())
                         click.echo(f"[✓] {format.name.upper()}: {src_file} → {dest_file}")
                 except Exception as e:
                     click.echo(f"[!] Failed to convert {src_file}: {e}", err=True)
