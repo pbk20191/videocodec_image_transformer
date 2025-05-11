@@ -1,6 +1,6 @@
 *.pyz
-/build
-/dist
+/build/
+/dist/
 /__pycache__/
 *.egg-info
 *.egg
