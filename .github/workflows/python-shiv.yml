@@ -20,16 +20,21 @@ jobs:
 
     - name: Set up Python
       uses: actions/setup-python@v5
+      id: food
       with:
         python-version: |
           3.11
-          3.13
           3.12
+          3.13
+        # cache: pip
+        # cache-dependency-path: '**/requirements.txt'
+
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        echo "dasdf ${{ steps.food.outputs.python-path }}"
 
     - name: Build CLI
       run: python build.py cli build/cli-${{ runner.os }}.pyz
