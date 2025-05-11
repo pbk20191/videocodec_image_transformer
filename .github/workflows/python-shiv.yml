@@ -14,14 +14,17 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.12", "3.13"]
+
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v4
       with:
-        python-version: "3.13"
+        python-version: ${{ matrix.python }}
+
 
     - name: Install dependencies
       run: |
@@ -29,19 +32,65 @@ jobs:
         pip install -r requirements.txt
 
     - name: Build CLI
-      run: python build.py cli build/cli-${{ runner.os }}.pyz
+      run: python build.py cli build/cli-${{ runner.os }}-py${{ matrix.python }}.pyz
 
     - name: Build GUI
-      run: python build.py gui build/gui-${{ runner.os }}.pyz
+      run: python build.py gui build/gui-${{ runner.os }}-py${{ matrix.python }}.pyz
 
     - name: Upload CLI Pyz
       uses: actions/upload-artifact@v4
       with:
-        name: cli-${{ runner.os }}.pyz
-        path: build/cli-${{ runner.os }}.pyz
+        name: cli-${{ runner.os }}-py${{ matrix.python }}.pyz
+        path: build/cli-${{ runner.os }}-py${{ matrix.python }}.pyz
 
     - name: Upload GUI Pyz
       uses: actions/upload-artifact@v4
       with:
-        name: gui-${{ runner.os }}.pyz
-        path: build/gui-${{ runner.os }}.pyz
+        name: gui-${{ runner.os }}-py${{ matrix.python }}.pyz
+        path: build/gui-${{ runner.os }}-py${{ matrix.python }}.pyz
+
+    # 🧠 추가: Rosetta 및 x86_64 빌드 (macOS 전용)
+    - name: Install Rosetta (for macOS only)
+      if: matrix.os == 'macos-latest'
+      run: |
+        softwareupdate --install-rosetta --agree-to-license
+
+    - name: Download x86_64 Python ${{ matrix.python }} installer
+      if: matrix.os == 'macos-latest'
+      run: |
+        curl -O https://www.python.org/ftp/python/${{ matrix.python }}/python-${{ matrix.python }}-macosx10.9.pkg
+
+    - name: Install x86_64 Python ${{ matrix.python }}
+      if: matrix.os == 'macos-latest'
+      run: |
+        sudo installer -pkg python-${{ matrix.python }}-macosx10.9.pkg -target /
+
+    - name: Install dependencies for x86_64 Python
+      if: matrix.os == 'macos-latest'
+      run: |
+        arch -x86_64 /usr/local/bin/python${{ matrix.python }} -m pip install --upgrade pip
+        arch -x86_64 /usr/local/bin/python${{ matrix.python }} -m pip install -r requirements.txt
+
+    - name: Build CLI (macOS x86_64)
+      if: matrix.os == 'macos-latest'
+      run: |
+        arch -x86_64 /usr/local/bin/python${{ matrix.python }} build.py cli build/cli-macOS-x86_64-py${{ matrix.python }}.pyz
+
+    - name: Build GUI (macOS x86_64)
+      if: matrix.os == 'macos-latest'
+      run: |
+        arch -x86_64 /usr/local/bin/python${{ matrix.python }} build.py gui build/gui-macOS-x86_64-py${{ matrix.python }}.pyz
+
+    - name: Upload CLI Pyz (macOS x86_64)
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: cli-macOS-x86_64-py${{ matrix.python }}.pyz
+        path: build/cli-macOS-x86_64-py${{ matrix.python }}.pyz
+
+    - name: Upload GUI Pyz (macOS x86_64)
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: gui-macOS-x86_64-py${{ matrix.python }}.pyz
+        path: build/gui-macOS-x86_64-py${{ matrix.python }}.pyz
