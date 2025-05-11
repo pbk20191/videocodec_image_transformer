@@ -24,9 +24,10 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: "3.13"
+        cache: pip
 
     - name: Install dependencies
       run: |
@@ -34,6 +35,14 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
 
+    - name: Cache PyInstaller build folder
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: pyinstaller-build-${{ runner.os }}-${{ matrix.arch }}-${{ github.sha }}
+        restore-keys: |
+          pyinstaller-build-${{ runner.os }}-${{ matrix.arch }}-
+  
     - name: Build CLI Executable
       run: pyinstaller cli.spec
 
