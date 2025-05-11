@@ -17,7 +17,7 @@ macOS는 파일 다운로드하면 gatekeeper로 실행이 차단되므로 `pyth
 
  macOS 
 
- `brew install python-tk@3.12`
+ `brew install python-tk@3.13`
 
  windows
 
