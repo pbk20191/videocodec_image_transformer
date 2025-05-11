@@ -1,4 +1,4 @@
-name: Build and Package Pyz
+name: Build and Package Pyz (3 OS × 3 Python Versions)
 
 on:
   push:
@@ -8,48 +8,57 @@ on:
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
+    runs-on: ${{ matrix.os }}
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Setup Python 3.11
+      id: py311
       uses: actions/setup-python@v5
-      id: food
       with:
-        python-version: |
-          3.11
-          3.12
-          3.13
-        # cache: pip
-        # cache-dependency-path: '**/requirements.txt'
+        python-version: 3.11
+        cache: pip
 
+    - name: Setup Python 3.12
+      id: py312
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
+        cache: pip
 
-    - name: Install dependencies
+    - name: Setup Python 3.13
+      id: py313
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.13
+        cache: pip
+
+    - name: Build with Python 3.11
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        echo "dasdf ${{ steps.food.outputs.python-path }}"
+        ${{ steps.py311.outputs.python-path }} -m pip install -r requirements.txt
+        ${{ steps.py311.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.11.pyz
+        ${{ steps.py311.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.11.pyz
 
-    - name: Build CLI
-      run: python build.py cli build/cli-${{ runner.os }}.pyz
+    - name: Build with Python 3.12
+      run: |
+        ${{ steps.py312.outputs.python-path }} -m pip install -r requirements.txt
+        ${{ steps.py312.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.12.pyz
+        ${{ steps.py312.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.12.pyz
 
-    - name: Build GUI
-      run: python build.py gui build/gui-${{ runner.os }}.pyz
+    - name: Build with Python 3.13
+      run: |
+        ${{ steps.py313.outputs.python-path }} -m pip install -r requirements.txt
+        ${{ steps.py313.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.13.pyz
+        ${{ steps.py313.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.13.pyz
 
-    - name: Upload CLI Pyz
+    - name: Upload all .pyz artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: cli-${{ runner.os }}.pyz
-        path: build/cli-${{ runner.os }}.pyz
-
-    - name: Upload GUI Pyz
-      uses: actions/upload-artifact@v4
-      with:
-        name: gui-${{ runner.os }}.pyz
-        path: build/gui-${{ runner.os }}.pyz
+        name: pyz-${{ runner.os }}
+        path: build/*.pyz
