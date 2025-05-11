@@ -1,9 +1,6 @@
 name: Build and Package Executables
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
 
 jobs:
