@@ -1,6 +1,6 @@
 import PIL
 from PIL import Image
-import pillow_heif
+
 from pathlib import Path
 from typing import Optional, Union
 import os
@@ -26,6 +26,7 @@ def convert_image(input_path:Path, output_path:Path, format:ImageFormat) -> None
         format (ImageFormat): The desired output format (HEIF or AVIF).
     """
     Image.init()
+    import pillow_heif
     pillow_heif.register_heif_opener()
     import pillow_avif
     dest_suffix = ".heif" if format == ImageFormat.HEIF else ".avif"
