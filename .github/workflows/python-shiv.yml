@@ -18,6 +18,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Install Rosetta 2
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        if ! /usr/bin/pgrep oahd >/dev/null 2>&1; then
+          sudo /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+        else
+          echo "Rosetta is already installed"
+        fi
+
+    - name: Confirm x86_64 emulation works
+      if: startsWith(matrix.os, 'macos')
+      run: arch -x86_64 /usr/bin/env bash -c 'echo "Running in x86_64 mode"'
+
     - name: Setup Python 3.11
       id: py311
       uses: actions/setup-python@v5
