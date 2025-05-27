@@ -16,7 +16,7 @@ class ImageFormat(str,Enum):
     HEIF = "heif"
     AVIF = "avif"
 
-def convert_image(input_path:Path, output_path:Path, format:ImageFormat) -> None:
+def convert_image(input_path:Path, output_path:Path, format:ImageFormat, quality:int | None = None) -> None:
     """
     Convert an image to HEIF or AVIF format and save it to the specified output path.
     
@@ -44,9 +44,12 @@ def convert_image(input_path:Path, output_path:Path, format:ImageFormat) -> None
                     with Image.open(src_file) as img:
                         dest_file = dest_root / (Path(file).stem + dest_suffix)
                         if format == ImageFormat.HEIF:
-                            img.save(dest_file, format=format.value.upper(), quality=None)
+                            img.save(dest_file, format=format.value.upper(), quality=quality)
                         else:
-                            img.save(dest_file, format=format.value.upper())
+                            if quality is None:
+                                img.save(dest_file, format=format.value.upper())
+                            else:
+                                img.save(dest_file, format=format.value.upper(), quality=quality)
                         click.echo(f"[✓] {format.name.upper()}: {src_file} → {dest_file}")
                 except Exception as e:
                     click.echo(f"[!] Failed to convert {src_file}: {e}", err=True)

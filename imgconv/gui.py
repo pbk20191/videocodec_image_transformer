@@ -9,6 +9,7 @@ class ImageConverterGUI(tk.Tk):
         super().__init__()
         self.title("Image Converter (HEIF / AVIF)")
         self.geometry("500x300")
+        # 품질 슬라이더 변수 추가
         self.resizable(True, True)
 
         # Input folder
@@ -22,6 +23,25 @@ class ImageConverterGUI(tk.Tk):
         ttk.Label(self, text="Output Folder:").pack(anchor='w', padx=10)
         ttk.Entry(self, textvariable=self.output_path_var, width=60).pack(padx=10)
         ttk.Button(self, text="Browse", command=self.browse_output).pack(pady=5)
+        # 품질 설정: 슬라이더 + 숫자 입력
+        self.quality_var = tk.IntVar(value=90)
+
+        quality_frame = ttk.LabelFrame(self, text="Quality")
+        quality_frame.pack(anchor='w', padx=10, pady=(10, 0), fill="x")
+
+        # grid 레이아웃 사용
+        ttk.Label(quality_frame, text="Compression Quality:", width=18).grid(row=0, column=0, sticky="w", padx=5, pady=5)
+
+        quality_slider = ttk.Scale(
+            quality_frame, from_=1, to=100, orient="horizontal", variable=self.quality_var
+        )
+        quality_slider.grid(row=0, column=1, sticky="ew", padx=5)
+
+        quality_entry = ttk.Entry(quality_frame, textvariable=self.quality_var, width=5)
+        quality_entry.grid(row=0, column=2, sticky="e", padx=5)
+
+        # grid column stretch 설정 (슬라이더가 늘어나게)
+        quality_frame.columnconfigure(1, weight=1)
         window_spec = ttk.LabelFrame(self)
         window_spec.pack(anchor='w', padx=10)
 
@@ -61,7 +81,7 @@ class ImageConverterGUI(tk.Tk):
             return
 
         try:
-            convert_image(input_path, output_path, ImageFormat(format_str))
+            convert_image(input_path, output_path, ImageFormat(format_str), quality=self.quality_var.get())
             messagebox.showinfo("Success", f"Images converted to {format_str.upper()} successfully.")
             # self.quit()
         except Exception as e:
