@@ -14,11 +14,12 @@ setup(
     description="A simple image converter for HEIF and AVIF formats.",
     long_description_content_type="text/markdown",
     py_modules=["entry",],
-    requires=["Pillow", "pillow_heif", "click"],
+    requires=["Pillow", "pillow_heif", "click", "pillow_avif_plugin"],
     install_requires=[
         "Pillow>=8.0.0",
         "pillow_heif>=0.1.0",
         "click>=7.0",
+        "pillow_avif_plugin>=1.5.2",
     ],
     packages=find_packages(),
     entry_points={
