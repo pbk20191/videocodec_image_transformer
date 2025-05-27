@@ -100,23 +100,23 @@ jobs:
     - name: Build with Python 3.11
       if: startsWith(matrix.os, 'macos')
       run: |
-        ${{ steps.py311_x64.outputs.python-path }} -m pip install -r requirements.txt
-        ${{ steps.py311_x64.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.11_x64.pyz
-        ${{ steps.py311_x64.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.11_x64.pyz
+        arch -x86_64 ${{ steps.py311_x64.outputs.python-path }} -m pip install -r requirements.txt
+        arch -x86_64 ${{ steps.py311_x64.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.11_x64.pyz
+        arch -x86_64 ${{ steps.py311_x64.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.11_x64.pyz
 
     - name: Build with Python 3.12
       if: startsWith(matrix.os, 'macos')
       run: |
-        ${{ steps.py312_x64.outputs.python-path }} -m pip install -r requirements.txt
-        ${{ steps.py312_x64.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.12_x64.pyz
-        ${{ steps.py312_x64.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.12_x64.pyz
+        arch -x86_64 ${{ steps.py312_x64.outputs.python-path }} -m pip install -r requirements.txt
+        arch -x86_64 ${{ steps.py312_x64.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.12_x64.pyz
+        arch -x86_64 ${{ steps.py312_x64.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.12_x64.pyz
 
     - name: Build with Python 3.13
       if: startsWith(matrix.os, 'macos')
       run: |
-        ${{ steps.py313_x64.outputs.python-path }} -m pip install -r requirements.txt
-        ${{ steps.py313_x64.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.13_x64.pyz
-        ${{ steps.py313_x64.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.13_x64.pyz
+        arch -x86_64 ${{ steps.py313_x64.outputs.python-path }} -m pip install -r requirements.txt
+        arch -x86_64 ${{ steps.py313_x64.outputs.python-path }} build.py cli build/cli-${{ runner.os }}-py3.13_x64.pyz
+        arch -x86_64 ${{ steps.py313_x64.outputs.python-path }} build.py gui build/gui-${{ runner.os }}-py3.13_x64.pyz
 
     - name: Upload all .pyz artifacts
       uses: actions/upload-artifact@v4
